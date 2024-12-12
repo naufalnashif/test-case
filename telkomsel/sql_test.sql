@@ -136,10 +136,11 @@ order by s."Dealer", s."Product";
 select
 	s."Product",
 	SUM(s."Sales") as total_sales,
-	AVG(p."Margin") as avg_margin
+	p."Margin",
+	AVG(s."Sales" * p."Margin") as avg_margin
 from public.salesdata s 
 left join public.productdata p using("Product")
-group by s."Product" 
+group by s."Product" , p."Margin"
 order by s."Product" ;
 
 
@@ -413,12 +414,18 @@ cte_mom_sales AS (
         "DealerName",
         month_payment,
         total_sales,
-        coalesce(LAG(total_sales, 1) OVER (PARTITION BY "DealerName" ORDER BY month_payment),0) AS prev_month_sales
+        COALESCE(LAG(total_sales, 1) OVER (PARTITION BY "DealerName" ORDER BY month_payment), 0) AS prev_month_sales,
+        CASE 
+            WHEN COALESCE(LAG(total_sales, 1) OVER (PARTITION BY "DealerName" ORDER BY month_payment), 0) = 0 THEN 0
+            ELSE ROUND(((total_sales - COALESCE(LAG(total_sales, 1) OVER (PARTITION BY "DealerName" ORDER BY month_payment), 0)) 
+                / COALESCE(LAG(total_sales, 1) OVER (PARTITION BY "DealerName" ORDER BY month_payment), 1)::DECIMAL), 2)
+        END AS mom
     FROM cte_agg_sales
 )
 SELECT *
 FROM cte_mom_sales
 ORDER BY "DealerName", month_payment;
+
 
 
 ----------------------------------------
@@ -521,3 +528,288 @@ SELECT
 FROM public.paymentdata p
 JOIN public.dealerdata d ON p."DealerName" = d."Dealer"
 ORDER BY p."DealerName", TO_DATE(p."PaymentDate", 'DD-MM-YYYY');
+
+-----------------------------------------
+
+"
+Creating tasks that specifically focus on using window functions for segmentation, such as
+decile segmentation, is an excellent way to assess a candidate's advanced SQL skills. Below
+are 10 tasks designed to test proficiency in these areas,
+Task 1: Dealer Sales Decile Segmentation
+Objective: Segment dealers into deciles based on total sales.
+Task 2: Product Sales Quartile Segmentation
+Objective: Segment products into quartiles based on total sales.
+Task 3: Dealer Income Percentile Ranking
+Objective: Rank dealers based on their income in percentiles.
+Task 4: Dealer Age Segmentation
+Objective: Segment dealers into 5 groups based on dealer age.
+Task 5: Storage Capacity Segmentation
+Objective: Segment dealers based on their storage capacity.
+Task 6: Sales Performance Ranking by Product
+Objective: Rank products by sales performance within each dealer.
+Task 7: Monthly Sales Segmentation
+Objective: Segment monthly sales into deciles.
+Task 8: Subscription Service Segmentation
+Objective: Segment dealers based on their subscription to credit services and sales performance.
+Task 9: Forecast Accuracy Segmentation
+Objective: Segment dealers based on the accuracy of their sales forecasts.
+Task 10: Product Margin Decile Ranking
+Objective: Rank products into deciles based on their margin.
+"
+
+----------------------------------------
+-- Task 1: Dealer Sales Decile Segmentation
+-- Objective: Segment dealers into deciles based on total sales.
+----------------------------------------
+WITH cte_total_sales AS (
+    SELECT 
+        "Dealer",
+        SUM("Sales") AS total_sales
+    FROM public.salesdata
+    GROUP BY "Dealer"
+),
+cte_decile_segment AS (
+    SELECT 
+        "Dealer",
+        total_sales,
+        NTILE(10) OVER (ORDER BY total_sales DESC) AS decile
+    FROM cte_total_sales
+)
+SELECT 
+    "Dealer",
+    total_sales,
+    decile
+FROM cte_decile_segment
+ORDER BY decile, total_sales DESC;
+
+
+
+----------------------------------------
+-- Task 2: Product Sales Quartile Segmentation
+-- Objective: Segment products into quartiles based on total sales.
+----------------------------------------
+WITH cte_total_sales AS (
+    SELECT 
+        "Dealer",
+        SUM("Sales") AS total_sales
+    FROM public.salesdata
+    GROUP BY "Dealer"
+),
+cte_decile_segment AS (
+    SELECT 
+        "Dealer",
+        total_sales,
+        NTILE(4) OVER (ORDER BY total_sales DESC) AS decile
+    FROM cte_total_sales
+)
+SELECT 
+    "Dealer",
+    total_sales,
+    decile
+FROM cte_decile_segment
+ORDER BY decile, total_sales DESC;
+
+
+----------------------------------------
+-- Task 3: Dealer Income Percentile Ranking
+-- Objective: Rank dealers based on their income in percentiles.
+----------------------------------------
+SELECT
+    "Dealer",
+    "Dealer Income",
+    ROUND(CAST(PERCENT_RANK() OVER (ORDER BY "Dealer Income") * 100 AS NUMERIC), 0) AS income_percentile_rank
+FROM public.dealerdata
+ORDER BY income_percentile_rank;
+
+
+----------------------------------------
+-- Task 4: Dealer Age Segmentation
+-- Objective: Segment dealers into 5 groups based on dealer age.
+----------------------------------------
+select 
+	"Dealer",
+	"Dealer Age",
+	ntile (5) over (order by "Dealer Age" ASC) as five_group
+from public.dealerdata
+
+
+----------------------------------------
+-- Task 5: Storage Capacity Segmentation
+-- Objective: Segment dealers based on their storage capacity.
+----------------------------------------
+WITH cte AS (
+	select 
+		"Dealer",
+		"Storage Capacity",
+		ntile (3) over (order by "Storage Capacity" ASC) as three_group
+	from public.dealerdata
+)
+SELECT 
+	*,
+	CASE
+		WHEN three_group = 1 then 'Low Capacity'
+		WHEN three_group = 2 then 'Medium Capacity'
+		WHEN three_group = 3 then 'High Capacity'
+	end as storage_segment
+from cte
+	
+
+----------------------------------------
+-- Task 6: Sales Performance Ranking by Product
+-- Objective: Rank products by sales performance within each dealer.
+----------------------------------------
+select
+	"Dealer",
+	"Product",
+	"total_sales",
+	dense_rank () over (partition by "Dealer" order by total_sales DESC) as rank_product
+from (
+	SELECT 
+		"Dealer",
+		"Product",
+		SUM("Sales") AS total_sales
+	FROM salesdata
+	GROUP BY "Dealer", "Product"
+)
+order by "Dealer"
+
+
+----------------------------------------
+-- Task 7: Monthly Sales Segmentation
+-- Objective: Segment monthly sales into deciles.
+----------------------------------------
+-- Assume that each Payment Date corresponds to 1 sale, as there is no column for total_sales by month.
+WITH cte_agg2 AS (
+    SELECT
+        p."DealerName", 
+        EXTRACT(MONTH FROM TO_DATE(p."PaymentDate", 'DD-MM-YYYY')) AS month_payment,
+        EXTRACT(YEAR FROM TO_DATE(p."PaymentDate", 'DD-MM-YYYY')) AS year_payment
+    FROM public.paymentdata p
+),
+cte_month_payment as (
+    select distinct
+        EXTRACT(MONTH FROM TO_DATE(p."PaymentDate", 'DD-MM-YYYY')) AS month_payment
+    FROM public.paymentdata p
+    order by month_payment
+),
+cte_main as (
+	SELECT 
+	    d."DealerName",
+	    m.month_payment,
+	    COALESCE(COUNT(a."DealerName"), 0) AS total_sales
+	FROM 
+		(SELECT DISTINCT "DealerName" FROM public.paymentdata) d
+	CROSS JOIN cte_month_payment m(month_payment)
+	LEFT JOIN cte_agg2 a ON a."DealerName" = d."DealerName" AND a.month_payment = m.month_payment
+	GROUP BY d."DealerName", m.month_payment
+	ORDER BY d."DealerName", m.month_payment
+)
+select 
+	month_payment,
+	"DealerName",
+	total_sales,
+	ntile (10) over(partition by month_payment order by total_sales) as decile
+from cte_main;
+
+
+
+----------------------------------------
+-- Task 8: Subscription Service Segmentation
+-- Objective: Segment dealers based on their subscription to credit services and sales performance.
+----------------------------------------
+with cte_join as (
+	select 
+		d."Dealer",
+		d."Subscription to Credit services",
+		sum(s."Sales") as total_sales
+	from dealerdata d
+	left join salesdata s using ("Dealer")
+	group by 
+		d."Dealer", 
+		d."Subscription to Credit services" 
+	order by "Dealer"
+),
+cte_main as (
+	select 
+		*,
+		PERCENT_RANK() OVER (partition by "Subscription to Credit services" ORDER BY total_sales) AS percentile_rank
+	from cte_join
+)
+select 
+	*,
+	case 
+		when "Subscription to Credit services" = 0 and percentile_rank > 0.75 then 'Non Subscribe - High Performer'
+		when "Subscription to Credit services" = 0 and percentile_rank > 0.5 then 'Non Subscribe - Mid Performer'
+		when "Subscription to Credit services" = 0 and percentile_rank < 0.5 then 'Non Subscribe - Low Performer'
+		when "Subscription to Credit services" = 1 and percentile_rank > 0.75 then 'Subscribe - High Performer'
+		when "Subscription to Credit services" = 1 and percentile_rank > 0.5 then 'Subscribe - Mid Performer'
+		when "Subscription to Credit services" = 1 and percentile_rank < 0.5 then 'Subscribe - Low Performer'
+	end as segment
+from cte_main;
+
+
+
+----------------------------------------
+-- Task 9: Forecast Accuracy Segmentation
+-- Objective: Segment dealers based on the accuracy of their sales forecasts.
+----------------------------------------
+with cte_accuracy as (
+	select 
+		s."Dealer" ,
+		s."Product",
+		SUM(s."Sales") as total_sales,
+		SUM(f."FC") as total_forecast,
+		AVG(ABS(s."Sales" - f."FC")) as mae,
+		ROUND(AVG((ABS(s."Sales" - f."FC")::decimal / NULLIF(s."Sales", 0)) * 100), 2) AS mape,
+		ROUND(100 - LEAST(AVG((ABS(s."Sales" - f."FC")::decimal / NULLIF(s."Sales", 0)) * 100), 100), 2) AS accuracy
+	from public.salesdata s 
+	left join public.forecast f on s."Dealer" = f."Dealer" and s."Product" = f."Product"
+	group by s."Dealer", s."Product"
+	order by s."Dealer", s."Product"
+),
+cte_mean_accuracy as (
+	select
+		"Dealer",
+		AVG(accuracy) as avg_accuracy
+	from cte_accuracy
+	group by "Dealer"
+)
+select 
+	"Dealer",
+	avg_accuracy,
+	case
+		when ntile(3) over (order by avg_accuracy) = 1 then 'Low Accuracy'
+		when ntile(3) over (order by avg_accuracy) = 2 then 'Mid Accuracy'
+		when ntile(3) over (order by avg_accuracy) = 3 then 'High Accuracy'
+	end segment_accuarcy
+from cte_mean_accuracy;
+
+
+
+----------------------------------------
+-- Task 10: Product Margin Decile Ranking
+-- Objective: Rank products into deciles based on their margin.
+----------------------------------------
+-- By margin per product
+select 
+	"Product",
+	"Margin",
+	ntile(10) over (order by "Margin" DESC) as rank_margin
+from productdata;
+
+-- By total margin
+with cte_join as (
+	select
+		s."Product",
+		SUM(s."Sales") as total_sales,
+		p."Margin",
+		SUM(s."Sales" * p."Margin") as total_margin
+	from public.salesdata s 
+	left join public.productdata p using("Product")
+	group by s."Product" , p."Margin"
+	order by s."Product"
+)
+select 
+	*, 
+	ntile(10) over (order by total_margin DESC) as rank_margin
+from cte_join;
