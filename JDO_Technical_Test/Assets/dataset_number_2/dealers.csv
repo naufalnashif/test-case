@@ -1,0 +1,101 @@
+dealer_id,dealer_name,dealer_income,dealer_age,storage_capacity,subscription_service
+1,Jenkins-Mcintosh,487422,17,987,Basic
+2,"Wagner, Beck and Gutierrez",439971,10,694,Basic
+3,Bishop and Sons,267544,29,761,Premium
+4,"Sellers, Blake and Pittman",455714,11,972,Basic
+5,Deleon-Rogers,129318,16,887,None
+6,"Mcpherson, Fischer and Ramirez",490746,18,958,Premium
+7,"Hooper, Brown and Hale",234609,14,289,None
+8,Price Inc,284129,17,796,Premium
+9,Miles Ltd,258864,8,248,Basic
+10,Fields-Church,168690,5,161,Basic
+11,"Ho, Sanchez and Ramirez",53666,26,535,Premium
+12,Lam Inc,474571,12,786,Premium
+13,Hernandez-Rojas,206235,15,615,None
+14,Hunt and Sons,369890,19,727,Basic
+15,"Vaughn, Fernandez and Wilson",443467,14,423,Premium
+16,Estrada-Ortiz,381045,24,163,None
+17,"Mcbride, Cole and Morrison",226547,16,690,None
+18,Morris-Mccarthy,251749,29,877,None
+19,Gregory Group,303158,26,220,None
+20,Lawrence and Sons,376846,10,991,None
+21,Harris-Graham,97587,9,700,None
+22,Glover and Sons,189436,11,894,Basic
+23,Howard Inc,103270,11,307,Premium
+24,Hill-Wiley,286366,15,828,Premium
+25,"Boyd, Rivas and Fisher",476010,9,500,Premium
+26,Perry-Fisher,420294,15,526,Premium
+27,Richards-Armstrong,488432,2,893,Premium
+28,Robles Inc,112818,24,980,None
+29,Navarro PLC,284599,28,291,Premium
+30,Lyons-Garcia,166970,11,843,None
+31,Cowan-Holloway,395069,18,789,Basic
+32,Lozano-Young,194518,24,829,Basic
+33,"Camacho, Johnson and Clark",405848,16,575,None
+34,Dennis Inc,499210,11,599,Premium
+35,"Edwards, Matthews and Howard",448742,27,362,None
+36,Holland-Weber,274893,22,329,None
+37,Bradley LLC,77306,5,475,Premium
+38,"Edwards, Fuentes and Boyer",267458,12,223,Basic
+39,"Williams, Stevens and Davis",219906,17,954,Premium
+40,"Smith, Scott and Lee",238495,18,751,None
+41,Watson-Donaldson,70357,2,391,None
+42,Reyes-Harrington,373362,25,993,Basic
+43,Chung-Frye,83212,16,262,None
+44,"Stewart, Nelson and Rocha",466867,23,383,None
+45,"Miranda, Brown and Cardenas",482333,6,879,Premium
+46,Brock Group,208060,12,248,Basic
+47,Torres Ltd,161604,23,249,Premium
+48,Ramos Inc,288837,27,253,Basic
+49,Hall and Sons,374670,10,455,Basic
+50,Snow and Sons,417776,1,743,Basic
+51,Baker-Davis,441642,22,807,Premium
+52,"Crane, Baker and Bell",402401,28,556,None
+53,"Steele, Burns and Mathis",311515,19,425,None
+54,"Elliott, Miller and Johnson",79518,12,105,Premium
+55,"Duncan, Reilly and Freeman",473857,17,351,Basic
+56,Sanders-Lewis,370581,26,525,None
+57,"Johnson, Chan and Yang",361843,21,624,Premium
+58,"Haas, Flowers and Mckenzie",410851,17,119,Basic
+59,Gomez Group,237245,17,258,Basic
+60,Snow-Taylor,263096,9,536,None
+61,"Hebert, Bowman and Jimenez",74770,7,928,Basic
+62,Porter-Williams,214903,19,530,None
+63,Duncan LLC,250720,2,460,Premium
+64,Allen Group,199643,4,388,Basic
+65,Baker-Jones,356598,15,854,None
+66,Hill PLC,88330,14,573,None
+67,Wang-Cruz,80302,25,902,Premium
+68,Burns-Powers,480775,16,514,Basic
+69,"Garcia, Allen and Hernandez",164532,17,737,None
+70,Green-Howard,68429,25,256,None
+71,Lester-Rivera,168773,23,251,Basic
+72,Galloway-Campbell,317389,8,479,Premium
+73,Johnson-Summers,333510,20,527,Basic
+74,"Chan, Garcia and Mcfarland",165599,11,308,None
+75,Monroe-Allen,268586,12,343,None
+76,White PLC,414067,10,115,Premium
+77,Sims-Butler,114416,16,222,Premium
+78,Hurley LLC,354653,11,685,Premium
+79,Mcdonald-Garcia,66866,18,876,Basic
+80,"Williams, Cooper and Hoover",414428,28,389,None
+81,Walker Inc,458801,27,246,Premium
+82,Armstrong-Harris,388046,15,800,Premium
+83,"Shepard, Patel and Perez",450067,10,335,Basic
+84,"Smith, Martin and Vargas",398266,23,115,None
+85,Valentine-Martin,491505,4,189,None
+86,"Ramos, Burke and Harris",455085,2,525,Basic
+87,Brennan Ltd,442006,23,722,None
+88,"Brown, Riggs and Lopez",103028,27,113,Premium
+89,Foster-Cruz,173030,28,107,Basic
+90,Terrell-Page,243650,4,134,Basic
+91,Mueller Inc,141944,10,896,None
+92,"Murphy, Saunders and Ferrell",82051,11,492,None
+93,May and Sons,302202,23,564,None
+94,Hill LLC,463093,8,754,Premium
+95,Ellis-Rogers,255217,23,810,Basic
+96,Reynolds-Garner,244031,9,499,Basic
+97,Hernandez-Martinez,247876,22,560,Basic
+98,Green-Blair,342224,10,829,Basic
+99,Hansen and Sons,283372,16,106,Premium
+100,"Lane, Mathews and Proctor",349695,8,102,Basic
